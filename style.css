@@ -1,9 +1,10 @@
 .calculator {
-   padding: 60px;
+   padding: 40px;
 }
 
 .display {
    padding: 24px;
+   height: 100px;
 }
 
 .buttons {
@@ -12,6 +13,6 @@
    gap: 5px;
 }
 
-button {
-   width: 200px;
+.buttons button {
+   height: 50px;
 }
