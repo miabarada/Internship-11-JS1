@@ -67,6 +67,8 @@ function handleClick(button) {
 
       if (inShiftMode && operator.shiftFunc) {
          result = operator.shiftFunc(firstOperand);
+      } else if (!inShiftMode && operator.label === 'x²'){
+         result = operator.func(firstOperand);
       } else {
          if (displayValue === '') return;
          secondOperand = Number(displayValue);
