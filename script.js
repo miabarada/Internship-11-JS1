@@ -1,30 +1,36 @@
 const display = document.querySelector('.display');
 const buttons = document.querySelector('.buttons');
 const shiftBottun = document.querySelector('.shift-button');
+const historyButton = document.querySelector('.history-button');
+const historyModal = document.querySelector('.history-modal');
+const historyOverlay = document.querySelector('.history-overlay');
+const historyContent = document.querySelector('.history-content')
+const closeHistoryButton = document.querySelector('.close-history');
 
 let displayValue = '';
 let firstOperand = null;
 let operator = null;
 let secondOperand = null;
-let inShiftMode = null;
+let inShiftMode = false;
+let history = [];
 
 const buttonsDefinition = [
    { label: '7', type: 'number' },
    { label: '8', type: 'number' },
    { label: '9', type: 'number' },
-   { label: '+', unary: 'no', shiftLabel: '!', shiftUnary: 'yes', type: 'operator', func: (a, b) => a + b, shiftFunc: factoriel},
+   { label: '+', unary: false, shiftLabel: '!', shiftUnary: true, type: 'operator', func: (a, b) => a + b, shiftFunc: factoriel},
    { label: '4', type: 'number' },
    { label: '5', type: 'number' },
    { label: '6', type: 'number' },
-   { label: '-', unary: 'no', shiftLabel: 'x³', shiftUnary: 'yes', type: 'operator', func: (a, b) => a - b, shiftFunc: (a) => a*a*a },
+   { label: '-', unary: false, shiftLabel: 'x³', shiftUnary: true, type: 'operator', func: (a, b) => a - b, shiftFunc: (a) => a*a*a },
    { label: '1', type: 'number' },
    { label: '2', type: 'number' },
    { label: '3', type: 'number' },
-   { label: 'x', unary: 'no', shiftLabel: 'log', shiftUnary: 'yes', type: 'operator', func: (a, b) => a * b, shiftFunc: (a) => Math.log10(a) },
+   { label: 'x', unary: false, shiftLabel: 'log', shiftUnary: true, type: 'operator', func: (a, b) => a * b, shiftFunc: (a) => Math.log10(a) },
    { label: '=', type: 'equals' },
    { label: '0', type: 'number' },
-   { label: 'x²', unary: 'yes', shiftLabel:'√', shiftUnary: 'yes', type: 'operator', func: (a) => a * a, shiftFunc: (a) => Math.sqrt(a) },
-   { label: '/', unary: 'no', shiftLabel:'³√', shiftUnary: 'yes', type: 'operator', func: (a, b) => b === 0 ? 'MATH ERROR' : a / b, shiftFunc: (a) => Math.cbrt(a) }
+   { label: 'x²', unary: true, shiftLabel:'√', shiftUnary: true, type: 'operator', func: (a) => a * a, shiftFunc: (a) => Math.sqrt(a) },
+   { label: '/', unary: false, shiftLabel:'³√', shiftUnary: true, type: 'operator', func: (a, b) => b === 0 ? 'MATH ERROR' : a / b, shiftFunc: (a) => Math.cbrt(a) }
 ];
 
 function factoriel(a) {
@@ -77,6 +83,13 @@ function handleClick(button) {
 
       display.textContent = result;
       displayValue = result.toString();
+
+      if (operator.unary || (inShiftMode && operator.shiftUnary)) {
+         addToHistory(firstOperand, operator, undefined, result);
+      } else {
+         addToHistory(firstOperand, operator, secondOperand, result);
+}
+
       operator = null;
    }
 }
@@ -92,4 +105,36 @@ function updateButtons() {
       btn.textContent = inShiftMode && data.shiftLabel ? data.shiftLabel : data.label;
    })
 }
+
+function addToHistory(first, op, second, result) {
+   history.push({first, op, second, result});
+   renderHistory();
+}
+
+function renderHistory() {
+   historyContent.innerHTML = '';
+   history.forEach(entry => {
+      const div = document.createElement('div');
+      div.classList.add('history-entry');
+      div.textContent = entry.second !== undefined
+         ? `${entry.first} ${entry.op.label} ${entry.second} = ${entry.result}`
+         : `${entry.op.shiftLabel || entry.op.label}(${entry.first}) = ${entry.result}`;
+      historyContent.appendChild(div);
+   });
+}
+
+historyButton.addEventListener('click', () => {
+  historyModal.classList.add('active');
+});
+
+closeHistoryButton.addEventListener('click', () => {
+  historyModal.classList.remove('active');
+});
+
+historyModal.addEventListener('click', (e) => {
+  if (!historyOverlay.contains(e.target)) {
+    historyModal.classList.remove('active');
+  }
+});
+
 

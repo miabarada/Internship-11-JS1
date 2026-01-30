@@ -16,3 +16,56 @@
 .buttons button {
    height: 50px;
 }
+
+.history-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: flex-end;
+  z-index: 1000;
+}
+
+.history-modal.active {
+  display: flex;
+}
+
+.history-overlay {
+  width: 300px;
+  height: 100%;
+  background: white;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+}
+
+.history-header button {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.history-content {
+  padding: 10px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.history-entry {
+  margin-bottom: 8px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
