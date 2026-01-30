@@ -8,15 +8,37 @@
 </head>
 <body class="calculator">
    <div class="display"></div>
-   <button class="shift-button">Shift</button>
-   <button class="history-button">History</button>
+
+   <div class="other-buttons">
+      <button class="on-off">On/Off</button>
+      <button class="shift-button">Shift</button>
+      <button class="history-button">History</button>
+      <button class="clear-button">C</button>
+   </div>
+   
    <div class="buttons"></div>
 
    <div class="history-modal">
       <div class="history-overlay">
          <div class="history-header">
-            <span>Povijest</span>
-            <button class="close-history">x</button>
+            <h1 class="history-title">Povijest</h1>
+            <button class="close-history"></button>
+         </div>
+         <div class="filter">
+            <input type="text" placeholder="Filtriraj po tekstu" class="filter-input">
+            <select class="filter-operation">
+               <option value="">Sve operacije</option>
+               <option value="+">+</option>
+               <option value="-">-</option>
+               <option value="x">x</option>
+               <option value="/">/</option>
+               <option value="x²">x²</option>
+               <option value="√">√</option>
+               <option value="!">!</option>
+               <option value="x³">x³</option>
+               <option value="log">log</option>
+               <option value="³√">³√</option>
+  </select>
          </div>
          <div class="history-content"></div>
       </div>

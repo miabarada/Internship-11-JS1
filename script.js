@@ -6,6 +6,9 @@ const historyModal = document.querySelector('.history-modal');
 const historyOverlay = document.querySelector('.history-overlay');
 const historyContent = document.querySelector('.history-content')
 const closeHistoryButton = document.querySelector('.close-history');
+const filterInput = document.querySelector('.filter-input');
+const filterOperationSelect = document.querySelector('.filter-operation');
+const onOffButton = document.querySelector('.on-off');
 
 let displayValue = '';
 let firstOperand = null;
@@ -13,6 +16,7 @@ let operator = null;
 let secondOperand = null;
 let inShiftMode = false;
 let history = [];
+let isOn = true;
 
 const buttonsDefinition = [
    { label: '7', type: 'number' },
@@ -44,8 +48,15 @@ buttonsDefinition.forEach(definition => {
    const button = document.createElement('button');
    button.textContent = definition.label;
 
-   button.addEventListener('click', () => handleClick(definition));
+   if (definition.type === 'number') {
+      button.classList.add('button-number');
+   } else if (definition.type === 'operator') {
+      button.classList.add('button-operator');
+   } else if (definition.type === 'equals') {
+      button.classList.add('button-equals');
+   }
 
+   button.addEventListener('click', () => handleClick(definition));
    buttons.appendChild(button);
 });
 
@@ -111,14 +122,36 @@ function addToHistory(first, op, second, result) {
    renderHistory();
 }
 
+filterInput.addEventListener('input', renderHistory);
+filterOperationSelect.addEventListener('change', renderHistory)
+
+
 function renderHistory() {
+   const textFilter = filterInput.value.toUpperCase();
+   const operationFilter = filterOperationSelect.value;
+
    historyContent.innerHTML = '';
-   history.forEach(entry => {
+
+   history
+   .filter(entry => {
+      let entryText;
+      if (entry.second !== undefined)
+         entryText = `${entry.first} ${entry.op.label} ${entry.second} = ${entry.result}`
+      else entryText = `${entry.op.shiftLabel || entry.op.label}(${entry.first}) = ${entry.result}`;
+
+      const matchesText = entryText.toUpperCase().includes(textFilter);
+
+      const opLabel = entry.second !== undefined ? entry.op.label : entry.op.shiftLabel || entry.op.label;
+      const matchesOp = operationFilter === '' || opLabel === operationFilter;
+
+      return matchesText && matchesOp;
+   })
+   .forEach(entry => {
       const div = document.createElement('div');
       div.classList.add('history-entry');
-      div.textContent = entry.second !== undefined
-         ? `${entry.first} ${entry.op.label} ${entry.second} = ${entry.result}`
-         : `${entry.op.shiftLabel || entry.op.label}(${entry.first}) = ${entry.result}`;
+      if (entry.second !== undefined)
+         div.textContent = `${entry.first} ${entry.op.label} ${entry.second} = ${entry.result}`
+      else div.textContent = `${entry.op.shiftLabel || entry.op.label}(${entry.first}) = ${entry.result}`;
       historyContent.appendChild(div);
    });
 }
@@ -135,6 +168,15 @@ historyModal.addEventListener('click', (e) => {
   if (!historyOverlay.contains(e.target)) {
     historyModal.classList.remove('active');
   }
+});
+
+onOffButton.addEventListener('click', () => {
+   isOn = !isOn;
+   if(!isOn) {
+      turnOffCalculator();
+   } else {
+      turnOnCalculator();
+   }
 });
 
 
