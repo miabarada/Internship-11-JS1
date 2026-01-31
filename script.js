@@ -10,6 +10,7 @@ const filterInput = document.querySelector('.filter-input');
 const filterOperationSelect = document.querySelector('.filter-operation');
 const onOffButton = document.querySelector('.on-off');
 const clearButton = document.querySelector('.clear-button');
+const miniDisplay = document.querySelector('.mini-display');
 
 let displayValue = '';
 let firstOperand = null;
@@ -23,7 +24,7 @@ const buttonsDefinition = [
    { label: '7', type: 'number' },
    { label: '8', type: 'number' },
    { label: '9', type: 'number' },
-   { label: '+', unary: false, shiftLabel: '!', shiftUnary: true, type: 'operator', func: (a, b) => a + b, shiftFunc: factoriel},
+   { label: '+', unary: false, shiftLabel: '!', shiftUnary: true, type: 'operator', func: (a, b) => a + b, shiftFunc: (a) => a < 0 ? 'MATH ERROR' : factoriel(a)},
    { label: '4', type: 'number' },
    { label: '5', type: 'number' },
    { label: '6', type: 'number' },
@@ -70,11 +71,27 @@ function handleClick(button) {
    }
 
    if (button.type === 'operator') {
-      if (displayValue === '')
+     if (button.label === '-' && displayValue === '') {
+         displayValue = '-';
+         display.textContent = displayValue;
          return;
+      }
+
+      if (displayValue === '' || displayValue === '-') return;
 
       firstOperand = Number(displayValue);
       operator = button;
+
+      miniDisplay.textContent = `${firstOperand} ${button.label}`;
+
+      if (inShiftMode && button.shiftUnary) {
+         miniDisplay.textContent = `${button.shiftLabel}(${firstOperand})`;
+      } else if (button.unary) {
+         miniDisplay.textContent = `${button.label}(${firstOperand})`;
+      } else {
+         miniDisplay.textContent = `${firstOperand} ${button.label}`;
+      }
+
       displayValue = '';
       display.textContent = displayValue;
    }
@@ -105,7 +122,13 @@ function handleClick(button) {
          addToHistory(firstOperand, operator, undefined, result);
       } else {
          addToHistory(firstOperand, operator, secondOperand, result);
-}
+      }
+
+      if (operator.unary || (inShiftMode && operator.shiftUnary)) {
+         miniDisplay.textContent += ` =`;
+      } else {
+         miniDisplay.textContent += ` ${secondOperand} =`;
+      }
 
       operator = null;
    }
@@ -202,6 +225,7 @@ function turnOffCalculator() {
   firstOperand = null;
   secondOperand = null;
   operator = null;
+  miniDisplay.textContent = '';
 
   history = [];
   renderHistory();
@@ -209,6 +233,7 @@ function turnOffCalculator() {
 
 function turnOnCalculator() {
   display.textContent = '';
+  miniDisplay.textContent = '';
   displayValue = '';
 }
 
@@ -223,4 +248,5 @@ function clear() {
    secondOperand = null;
    operator = null;
    display.textContent = '';
+   miniDisplay.textContent = '';
 }
