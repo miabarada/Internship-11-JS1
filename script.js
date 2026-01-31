@@ -9,6 +9,7 @@ const closeHistoryButton = document.querySelector('.close-history');
 const filterInput = document.querySelector('.filter-input');
 const filterOperationSelect = document.querySelector('.filter-operation');
 const onOffButton = document.querySelector('.on-off');
+const clearButton = document.querySelector('.clear-button');
 
 let displayValue = '';
 let firstOperand = null;
@@ -61,6 +62,8 @@ buttonsDefinition.forEach(definition => {
 });
 
 function handleClick(button) {
+   if(!isOn) return;
+
    if (button.type === 'number') {
       displayValue += button.label
       display.textContent = displayValue;
@@ -106,6 +109,7 @@ function handleClick(button) {
 }
 
 shiftBottun.addEventListener('click', () => {
+   if(!isOn) return;
    inShiftMode = !inShiftMode;
    updateButtons();
 });
@@ -139,7 +143,8 @@ function renderHistory() {
          entryText = `${entry.first} ${entry.op.label} ${entry.second} = ${entry.result}`
       else entryText = `${entry.op.shiftLabel || entry.op.label}(${entry.first}) = ${entry.result}`;
 
-      const matchesText = entryText.toUpperCase().includes(textFilter);
+      const entryTextNoSpaces = entryText.replace(/\s/g, '').toUpperCase();
+      const matchesText = entryTextNoSpaces.toUpperCase().includes(textFilter);
 
       const opLabel = entry.second !== undefined ? entry.op.label : entry.op.shiftLabel || entry.op.label;
       const matchesOp = operationFilter === '' || opLabel === operationFilter;
@@ -157,6 +162,7 @@ function renderHistory() {
 }
 
 historyButton.addEventListener('click', () => {
+   if(!isOn) return;
   historyModal.classList.add('active');
 });
 
@@ -179,4 +185,31 @@ onOffButton.addEventListener('click', () => {
    }
 });
 
+function turnOffCalculator() {
+  display.textContent = 'OFF';
+  displayValue = '';
+  firstOperand = null;
+  secondOperand = null;
+  operator = null;
 
+  history = [];
+  renderHistory();
+}
+
+function turnOnCalculator() {
+  display.textContent = '';
+  displayValue = '';
+}
+
+clearButton.addEventListener('click', () => {
+   if(!isOn) return;
+   clear();
+});
+
+function clear() {
+   displayValue= '';
+   firstOperand = null;
+   secondOperand = null;
+   operator = null;
+   display.textContent = '';
+}

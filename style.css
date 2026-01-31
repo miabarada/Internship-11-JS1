@@ -115,7 +115,7 @@ body {
 }
 
 .history-overlay {
-  width: 300px;
+  width: 400px;
   height: 100%;
   background: #1A1C1E;
   display: flex;
@@ -173,7 +173,7 @@ body {
    color: #b3a190;
    border-radius: 8px;
    border: 1px solid #b3a190;
-   width: 140px;
+   width: 200px;
 }
 
 .filter-input::placeholder {
