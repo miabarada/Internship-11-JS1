@@ -90,7 +90,10 @@ function handleClick(button) {
       } else if (!inShiftMode && operator.label === 'x²'){
          result = operator.func(firstOperand);
       } else {
-         if (displayValue === '') return;
+         if (displayValue === '') {
+            showMathError();
+            return;
+         }
          secondOperand = Number(displayValue);
          result = operator.func(firstOperand, secondOperand);
       }
@@ -106,6 +109,14 @@ function handleClick(button) {
 
       operator = null;
    }
+}
+
+function showMathError() {
+   display.textContent = 'ERROR';
+   displayValue = '';
+   firstOperand = null;
+   secondOperand = null;
+   operator = null;
 }
 
 shiftBottun.addEventListener('click', () => {
